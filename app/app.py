@@ -37,67 +37,66 @@ def create_app() -> Flask:
             return redirect(url_for("login"))
         return None
 
-   @app.get("/")
-   def index():
-       if session.get("user_id"):
-           return redirect(url_for("profile"))
-       return redirect(url_for("login"))
+    @app.get("/")
+    def index():
+        if session.get("user_id"):
+            return redirect(url_for("profile"))
+        return redirect(url_for("login"))
 
-   @app.get("/profile")
-   def profile():
-       r = require_login()
-       if r:
-           return r
-       return render_template("profile.html")
+    @app.get("/profile")
+    def profile():
+        r = require_login()
+        if r:
+            return r
+        return render_template("profile.html")
 
-   @app.route("/register", methods=["GET", "POST"])
-   def register():
-       if request.method == "POST":
-           username = (request.form.get("username") or "").strip()
-           password = request.form.get("password") or ""
+    @app.route("/register", methods=["GET", "POST"])
+    def register():
+        if request.method == "POST":
+            username = (request.form.get("username") or "").strip()
+            password = request.form.get("password") or ""
 
-           if not username or not password:
-               flash("Username and password are required.")
-               return render_template("register.html")
+            if not username or not password:
+                flash("Username and password are required.")
+                return render_template("register.html")
 
-           existing = User.query.filter_by(username=username).first()
-           if existing:
-               flash("Username already exists.")
-               return render_template("register.html")
+            existing = User.query.filter_by(username=username).first()
+            if existing:
+                flash("Username already exists.")
+                return render_template("register.html")
 
-           u = User(username=username, password_hash=generate_password_hash(password))
-           db.session.add(u)
-           db.session.commit()
+            u = User(username=username, password_hash=generate_password_hash(password))
+            db.session.add(u)
+            db.session.commit()
 
-           session["user_id"] = int(u.id)
-           return redirect(url_for("profile"))
-       return render_template ("register.html")
+            session["user_id"] = int(u.id)
+            return redirect(url_for("profile"))
+        return render_template ("register.html")
 
-   @app.route("/login", methods=["GET", "POST"])
-   def login():
-       if request.method == "POST":
-           username = (request.form.get("username") or "").strip()
-           password = request.form.get("password") or ""
+    @app.route("/login", methods=["GET", "POST"])
+    def login():
+        if request.method == "POST":
+            username = (request.form.get("username") or "").strip()
+            password = request.form.get("password") or ""
 
-           u = User.query.filter_by(username=username).first()
-           if not u or not check_password_hash(u.password_hash, password):
-               flash("Invalid credentials")
-               return render_template("login.html")
+            u = User.query.filter_by(username=username).first()
+            if not u or not check_password_hash(u.password_hash, password):
+                flash("Invalid credentials")
+                return render_template("login.html")
 
-           session["user_id"] = int(u.id)
-           return redirect(url_for("profile"))
-       return render_template("login.html")
+            session["user_id"] = int(u.id)
+            return redirect(url_for("profile"))
+        return render_template("login.html")
 
-   @app.get("/logout")
-   def logout():
-       session.clear()
-       return redirect(url_for("login"))
+    @app.get("/logout")
+    def logout():
+        session.clear()
+        return redirect(url_for("login"))
 
-   return app
+    return app
 
 app = create_app()
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
-
 
