@@ -1,7 +1,10 @@
 import os
-from flask import Flask, render_template, request, redirect, session, url_for, flash
+import uuid
+from pathlib import Path
+from flask import Flask, render_template, request, redirect, session, url_for, flash, abort
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 from sqlalchemy import text
 
 db = SQLAlchemy()
@@ -10,8 +13,15 @@ def create_app() -> Flask:
     app = Flask(__name__)
 
     app.config["SECRET_KEY"] = os.environ["FLASK_SECRET_KEY"]
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
+    db_url = os.environ.get("DATABASE_URL")
+    if not db_url:
+        raise RuntimeError("DATABASE_URL isn't seyt. Run this app on app VM with Postgres")
+    app.config["SQLALCHEMY_DATABASE_URI"] = db_url
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+    app.config["UPLOAD_ROOT"] = os.environ.get(
+            "UPLOAD_ROOT", "/var/lib/pictapp/uploads"
+    )
 
     db.init_app(app)
 
@@ -20,6 +30,15 @@ def create_app() -> Flask:
         id = db.Column(db.BigInteger, primary_key=True)
         username = db.Column(db.Text, unique=True, nullable=False)
         password_hash = db.Column(db.Text, nullable=False)
+
+    class Image(db.Model):
+        __tablename__ = "images"
+        id = db.Column(db.BigInteger, primary_key=True)
+        user_id = db.Column(db.BigInteger, nullable=False, index=True)
+        original_filename = db.Column(db.Text, nullable=False)
+        stored_filename = db.Column(db.Text, nullable=False, unique=True)
+        stored_path = db.Column(db.Text, nullable=False)
+        created_at = db.Column(db.DateTime(timezone=True), server_default=text("now()"), nullable=False)
 
     with app.app_context():
         required = {"users", "images"}
@@ -36,6 +55,21 @@ def create_app() -> Flask:
         if not session.get("user_id"):
             return redirect(url_for("login"))
         return None
+
+    ALLOWED_EXT = {".jpg", ".jpeg", ".png", ".webp"}
+
+    def upload_root() -> Path:
+        return Path(app.config["UPLOAD_ROOT"])
+
+    def user_upload_dir(user_id: int) -> Path:
+        return upload_root() / f"u{user_id}"
+
+    def pick_ext(filename: str) -> str:
+        safe = secure_filename(filename or "")
+        ext = Path(safe).suffix.lower()
+        if ext not in ALLOWED_EXT:
+            raise ValueError("Unsupported file type. Usr jpg,jpeg,png,webp")
+        return ext
 
     @app.get("/")
     def index():
