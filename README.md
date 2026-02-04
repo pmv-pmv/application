@@ -34,6 +34,7 @@ PostgreSQL stores metadata only:
 4. Start the application:
 ```bash
 python app.py
+```
 5. Open the app in a browser: http//localhost:5000
 
 ## Notes
