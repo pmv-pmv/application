@@ -238,7 +238,7 @@ def create_app() -> Flask:
         db.session.commit()
 
         try:
-            file_path.unlink(mission_ok=True)
+            file_path.unlink(missing_ok=True)
         except Exception:
             pass
 
