@@ -1,0 +1,4 @@
+{
+  "words": ["nosborn", "crey", "sibiraj", "htmllint", "isort", "pylint"],
+  "ignorePaths": ["node_modules/**", ".git/**"]
+}
