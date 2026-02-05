@@ -52,12 +52,14 @@ jobs:
           annotations: true
           all-files: true
 
-      - name: Run Gitleaks
-        id: gitleaks
-        uses: gitleaks/gitleaks-action@v2
-        continue-on-error: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      ## temporal disable the Gitleaks Action, currently using pre-commit instead
+      # - name: Run Gitleaks
+      #   id: gitleaks
+      #   uses: gitleaks/gitleaks-action@v2
+      #   continue-on-error: true
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE}}
 
       - name: Setup Python
         uses: actions/setup-python@v6
@@ -131,13 +133,13 @@ jobs:
             passed=$((passed + 1))
           fi
 
-          if [ "${{ steps.gitleaks.outcome }}" != "success" ]; then
-            echo "Gitleaks: FAILED !!!" >> $GITHUB_STEP_SUMMARY
-            failed=$((failed + 1))
-          else
-            echo "Gitleaks: PASSED" >> $GITHUB_STEP_SUMMARY
-            passed=$((passed + 1))
-          fi
+          # if [ "${{ steps.gitleaks.outcome }}" != "success" ]; then
+          #   echo "Gitleaks: FAILED !!!" >> $GITHUB_STEP_SUMMARY
+          #   failed=$((failed + 1))
+          # else
+          #   echo "Gitleaks: PASSED" >> $GITHUB_STEP_SUMMARY
+          #   passed=$((passed + 1))
+          # fi
 
           if [ "${{ steps.black.outcome }}" != "success" ]; then
             echo "Black: FAILED. Please check its warnings!" >> $GITHUB_STEP_SUMMARY
