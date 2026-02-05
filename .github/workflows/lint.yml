@@ -26,17 +26,14 @@ jobs:
         continue-on-error: true
         with:
           dry: true
-          prettier_options: --check **/*.{md,yaml,yml}
+          prettier_options: --check .
 
       - name: Run CSpell
         id: cspell
         uses: streetsidesoftware/cspell-action@v8.2.0
         continue-on-error: true
-        # with:
-        #   files: |
-        #     **/*.{md,py,html,css}
-        #   inline: warning
-
+        with:
+          strict: false
 
       - name: Setup Node for HTML ESLint and Run HTML ESLint
         uses: actions/setup-node@v6
