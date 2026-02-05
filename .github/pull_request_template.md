@@ -15,5 +15,3 @@
 ## Validation
 
 - Describe how this PR was tested
-
-
