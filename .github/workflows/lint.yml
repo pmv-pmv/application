@@ -164,7 +164,8 @@ jobs:
           fi
 
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Total: $passed passed, $failed+$warned failed**" >> $GITHUB_STEP_SUMMARY
+          total_failed=$((failed + warned))
+          echo "**Total: $passed passed, $total_failed failed**" >> $GITHUB_STEP_SUMMARY
 
           if [ $failed -gt 0 ]; then
             echo "" >> $GITHUB_STEP_SUMMARY
