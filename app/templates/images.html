@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>My images</title>
+</head>
+<body>
+
+<p>
+    <a href="{{ url_for('profile') }}">Profile</a> |
+    <a href="{{ url_for('logout') }}">Logout</a>
+</p>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul>
+      {% for msg in messages %}
+        <li>{{ msg }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<h2>Upload image</h2>
+<form method="post"
+      action="{{ url_for('images_upload') }}"
+      enctype="multipart/form-data">
+    <input type="file" name="image" required>
+    <button type="submit">Upload</button>
+</form>
+
+<h2>Your images</h2>
+
+<ul>
+  {% for img in images %}
+    <li style="margin-bottom: 20px;">
+      <div>
+        <strong>{{ img.original_filename }}</strong>
+        ({{ img.created_at }})
+      </div>
+
+      <div>
+        <img
+          src="{{ url_for('images_file', image_id=img.id) }}"
+          alt="image"
+          style="max-width: 300px; display: block; margin-top: 5px;"
+        >
+      </div>
+
+      <form method="post"
+            action="{{ url_for('images_delete', image_id=img.id) }}"
+            style="display:inline">
+          <button type="submit">Delete</button>
+      </form>
+    </li>
+  {% else %}
+    <li>No images yet.</li>
+  {% endfor %}
+</ul>
+
+</body>
+</html>
