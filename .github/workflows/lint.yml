@@ -96,11 +96,12 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
 
           failed=0
+          warned=0
           passed=0
 
           if [ "${{ steps.markdownlint.outcome }}" != "success" ]; then
             echo "Markdownlint: FAILED. Please check its warnings!" >> $GITHUB_STEP_SUMMARY
-            # failed=$((failed + 1))
+            warned=$((warned + 1))
           else
             echo "Markdownlint: PASSED" >> $GITHUB_STEP_SUMMARY
             passed=$((passed + 1))
@@ -108,7 +109,7 @@ jobs:
 
           if [ "${{ steps.prettier.outcome }}" != "success" ]; then
             echo "Prettier: FAILED. Please check its warnings!" >> $GITHUB_STEP_SUMMARY
-            # failed=$((failed + 1))
+            warned=$((warned + 1))
           else
             echo "Prettier: PASSED" >> $GITHUB_STEP_SUMMARY
             passed=$((passed + 1))
@@ -116,7 +117,7 @@ jobs:
 
           if [ "${{ steps.cspell.outcome }}" != "success" ]; then
             echo "CSpell: FAILED. Please check its warnings!" >> $GITHUB_STEP_SUMMARY
-            # failed=$((failed + 1))
+            warned=$((warned + 1))
           else
             echo "CSpell: PASSED" >> $GITHUB_STEP_SUMMARY
             passed=$((passed + 1))
@@ -140,7 +141,7 @@ jobs:
 
           if [ "${{ steps.black.outcome }}" != "success" ]; then
             echo "Black: FAILED. Please check its warnings!" >> $GITHUB_STEP_SUMMARY
-            # failed=$((failed + 1))
+            warned=$((warned + 1))
           else
             echo "Black: PASSED" >> $GITHUB_STEP_SUMMARY
             passed=$((passed + 1))
@@ -148,7 +149,7 @@ jobs:
 
           if [ "${{ steps.isort.outcome }}" != "success" ]; then
             echo "isort: FAILED. Please check its warnings!" >> $GITHUB_STEP_SUMMARY
-            # failed=$((failed + 1))
+            warned=$((warned + 1))
           else
             echo "isort: PASSED" >> $GITHUB_STEP_SUMMARY
             passed=$((passed + 1))
@@ -163,7 +164,7 @@ jobs:
           fi
 
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Total: $passed passed, $failed failed**" >> $GITHUB_STEP_SUMMARY
+          echo "**Total: $passed passed, $failed+$warned failed**" >> $GITHUB_STEP_SUMMARY
 
           if [ $failed -gt 0 ]; then
             echo "" >> $GITHUB_STEP_SUMMARY
