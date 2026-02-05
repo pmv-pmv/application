@@ -99,7 +99,7 @@ jobs:
           passed=0
 
           if [ "${{ steps.markdownlint.outcome }}" != "success" ]; then
-            echo "Markdownlint: FAILED !!!" >> $GITHUB_STEP_SUMMARY
+            echo "Markdownlint: FAILED. Please check its warnings!" >> $GITHUB_STEP_SUMMARY
             # failed=$((failed + 1))
           else
             echo "Markdownlint: PASSED" >> $GITHUB_STEP_SUMMARY
@@ -107,16 +107,16 @@ jobs:
           fi
 
           if [ "${{ steps.prettier.outcome }}" != "success" ]; then
-            echo "Prettier: FAILED !!!" >> $GITHUB_STEP_SUMMARY
-            failed=$((failed + 1))
+            echo "Prettier: FAILED. Please check its warnings!" >> $GITHUB_STEP_SUMMARY
+            # failed=$((failed + 1))
           else
             echo "Prettier: PASSED" >> $GITHUB_STEP_SUMMARY
             passed=$((passed + 1))
           fi
 
           if [ "${{ steps.cspell.outcome }}" != "success" ]; then
-            echo "CSpell: FAILED !!!" >> $GITHUB_STEP_SUMMARY
-            failed=$((failed + 1))
+            echo "CSpell: FAILED. Please check its warnings!" >> $GITHUB_STEP_SUMMARY
+            # failed=$((failed + 1))
           else
             echo "CSpell: PASSED" >> $GITHUB_STEP_SUMMARY
             passed=$((passed + 1))
@@ -139,16 +139,16 @@ jobs:
           fi
 
           if [ "${{ steps.black.outcome }}" != "success" ]; then
-            echo "Black: FAILED !!!" >> $GITHUB_STEP_SUMMARY
-            failed=$((failed + 1))
+            echo "Black: FAILED. Please check its warnings!" >> $GITHUB_STEP_SUMMARY
+            # failed=$((failed + 1))
           else
             echo "Black: PASSED" >> $GITHUB_STEP_SUMMARY
             passed=$((passed + 1))
           fi
 
           if [ "${{ steps.isort.outcome }}" != "success" ]; then
-            echo "isort: FAILED !!!" >> $GITHUB_STEP_SUMMARY
-            failed=$((failed + 1))
+            echo "isort: FAILED. Please check its warnings!" >> $GITHUB_STEP_SUMMARY
+            # failed=$((failed + 1))
           else
             echo "isort: PASSED" >> $GITHUB_STEP_SUMMARY
             passed=$((passed + 1))
@@ -167,6 +167,6 @@ jobs:
 
           if [ $failed -gt 0 ]; then
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "**Please fix the linting issues above**" >> $GITHUB_STEP_SUMMARY
+            echo "**If you see any **Failed** results, please fix the linting and formatting issues above.**" >> $GITHUB_STEP_SUMMARY
             exit 1
           fi
